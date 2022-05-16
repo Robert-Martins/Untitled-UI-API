@@ -16,7 +16,9 @@ app.get('/', (request, response)=>{
     response.send('OK')
 })
 
-require('./controller/authController')(app);
+require('./app/controller/authController')(app);
+require('./app/controller/projectController')(app);
+require('./app/controller/userController')(app);
 
 const port = 5000;
 
