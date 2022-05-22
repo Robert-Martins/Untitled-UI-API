@@ -1,20 +1,16 @@
 const express = require('express');
 const User = require('../models/user.model');
+const { checkIdType, handleQuerySort } = require('../functions/user.controller');
 
 const router = express.Router();
 
-const checkIdType = (id) =>{
-    if(id.match(/^[0-9a-fA-F]{24}$/))
-        return true;
-    return false;
-}
-
-//Get all users
+//Get all users paginated and sorted
 router.get('/', async (request, response) =>{
     const pageSize = request.query.pageSize ? parseInt(request.query.pageSize) : 0;
     const page = request.query.page ? parseInt(request.query.page) : 0;
+    const sort = handleQuerySort(request.query.sort);
     try{
-        const users = await User.find({}).limit(pageSize).skip(pageSize * page);
+        const users = await User.find({}).sort(sort).limit(pageSize).skip(pageSize * page);
         if(users.length == 0)
             return response.status(401).send({ error: 'Database empty' })
         return response.status(200).send(users);

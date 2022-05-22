@@ -12,10 +12,6 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
-app.get('/', (request, response)=>{
-    response.send('OK')
-})
-
 require('./app/controller/authController')(app);
 require('./app/controller/projectController')(app);
 require('./app/controller/userController')(app);
