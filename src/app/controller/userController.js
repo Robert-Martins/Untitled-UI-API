@@ -11,8 +11,10 @@ const checkIdType = (id) =>{
 
 //Get all users
 router.get('/', async (request, response) =>{
+    const pageSize = request.query.pageSize ? parseInt(request.query.pageSize) : 0;
+    const page = request.query.page ? parseInt(request.query.page) : 0;
     try{
-        const users = await User.find({});
+        const users = await User.find({}).limit(pageSize).skip(pageSize * page);
         if(users.length == 0)
             return response.status(401).send({ error: 'Database empty' })
         return response.status(200).send(users);
@@ -44,9 +46,9 @@ router.put('/:id', async (request, response) =>{
     let user;
     try{
         if(checkIdType(id))
-            user = await User.findByIdAndUpdate(id);
+            user = await User.findByIdAndUpdate(id, request.body, {new:true});
         if(!checkIdType(id))
-            user = await User.findOneAndUpdate({documentId: id});  
+            user = await User.findOneAndUpdate({documentId: id}, request.body, {new: true});  
         if(user.length == 0)
                 return response.status(401).send({ error: 'User Not Found' });
 
