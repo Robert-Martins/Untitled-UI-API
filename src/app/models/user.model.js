@@ -2,6 +2,9 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema({
+    documentId:{
+        type: Number
+    },
     name:{
         type: String,
         required: true,
@@ -22,34 +25,9 @@ const userSchema = new mongoose.Schema({
         minlength: 7,
         select: false
     },
-    /* adress:{
-        cep:{
-            type: String,
-            required: true,
-            minlength: 7,
-        },
-        uf:{
-            type: String,
-        },
-        city:{
-            type: String,
-        }
+    adressId:{
+        type: Number
     },
-    socials:{
-        facebook:{
-            type: String,
-        },
-        instagram:{
-            type: String,
-        },
-        linkedin:{
-            type: String,
-        },
-        twitter:{
-            type: String,
-        }
-    }, 
-    */
     createdAt:{
         type: Date,
         default: Date.now,
@@ -63,21 +41,11 @@ userSchema.pre('save', async function(next){
     const hash = await bcrypt.hash(this.password, 10);
     this.password = hash;
     
+    this.documentId = (await User.find({})).length + 1;
+
     next();
 })
 
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;
-
-/*"adress":{
-        "cep": "75400-160",
-        "uf": "Goiás",
-        "city": "Inhumas"
-    },
-    "socials":{
-        "facebook": "Robert Martins",
-        "instagram": "@robert_ccm",
-        "linkedin": "@robertmartins",
-        "twitter": "@robertcantares"
-    } */
